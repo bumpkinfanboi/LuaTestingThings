@@ -1,5 +1,3 @@
-print("test")
-
 local counter = 1
 local input = nil
 local invsize = 20 -- gonna make a backpack but ill do that later
@@ -42,7 +40,7 @@ inventory[3] = bandage
 function checkinv()
     print("Do you want to check inventory?")
     input = io.read()
-    if input == "check inventory" then
+    if input == "check inventory" or input == "check" or input == "y" or input == "yes" then
         for i=1,invsize do
             if inventory[i] == nil then
                 inventory[i] = "empty"
@@ -60,14 +58,32 @@ end
 function playerstatus()
     print("Do you want to check status?")
     input = io.read()
-        if input == "check status" then
-            print("Status report: "..PlayerFood.."/100 nutrition, "..PlayerWater.."/100 hydration, %"..HPpercent.." health remaining. Would you like a full injury diagnostic?")
+        if input == "check status" or input == "check" or input == "y" or input == "yes" then
+            print("Status report: "..PlayerFood.."/100 nutrition, "..PlayerWater.."/100 hydration, "..HPpercent.."% health remaining. Would you like a full injury diagnostic?")
+            input = nil
             input = io.read()
-            if input == "yes" then
+            if input == "diagnostic" or input == "y" or input == "yes" then
             print("Diagnostic results: \n Head is at "..Head[2].."/35. \n Torso is at "..Torso[2].."/85. \n Stomach is at "..Stomach[2].."/70. \n Right arm is at "..Rarm[2].."/60. \n Left arm is at "..Larm[2].."/60. \n Right leg is at "..Rleg[2].."/65. \n Left leg is at "..Lleg[2].."/65. \n Current status effects: N/A")
             end
         end
     input = nil
 end
-checkinv()
-playerstatus()
+
+function makegrid()
+    width = math.random(5,20)*2
+    height = math.random(5,20)
+    counter = 1
+    for i=1,height do
+        if counter == 1 or counter == height then
+            line = string.rep("#",width)
+            print(line)
+            dotline = string.rep(".",width-2)
+            else print("#"..dotline.."#")
+        end
+        counter = counter + 1
+    end
+    counter = 1
+end
+--checkinv()
+--playerstatus()
+makegrid()
