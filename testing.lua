@@ -13,10 +13,8 @@ local demon = {"demon",20,5,sword} -- name, hp, ap, and items
 local gelblob = {"gellatinous blob", 100, 1,} -- name, hp, and ap
 local enemies = {goblin, demon, gelblob}
 
-local CurrentRoomCoords = {0,0}
+local CurrentRoomDimensions = {0,0}
 local CurrentRoomMap = {}
-CurrentRoomCoords[1] = x
-CurrentRoomCoords[2] = y
 
 local Head = {"Head",35}
 local Torso = {"Torso",85}
@@ -75,35 +73,36 @@ function playerstatus()
 end
 
 function makegrid()
-    width = math.random(5,20)*2
+    width = math.random(5,40) -- starting parameters to generate
     height = math.random(5,20)
-    CurrentRoomCoords[1] = width
-    CurrentRoomCoords[2] = height
+    CurrentRoomDimensions = {width,height}
+    roomsizeXbyY = table.concat(CurrentRoomDimensions," ") -- turning width and height tables to a string
+    print(roomsizeXbyY)
     counter = 1
-    for i=1,height do
-        if counter == 1 or counter == height then
-            line = string.rep("#",width)
-            print(line)
-            dotline = string.rep(".",width-2)
-            else print("#"..dotline.."#")
-        end
-        counter = counter + 1
-    end
-    counter = 1
-    for i=1,height do
+    for i=1,height do -- creating map, empty space is a period, its height x width
         CurrentRoomMap[i] = {}
         for j=1,width do
-        CurrentRoomMap[i][j] = "T"
+        CurrentRoomMap[i][j] = "." -- /CurrentRoomMap/Height/Width
         end
     end
-    counter = 1
-    for i=1,width do
-        
-        counter = counter + 1
+    for i=1,width do -- walls
+        CurrentRoomMap[1][i] = "#" -- first row = #
+        CurrentRoomMap[height][i] = "#" -- last row = #
     end
-    print(lineseg)
-    counter = 1
+    for j=1,height do
+    CurrentRoomMap[j][1] = "#" -- first column = #
+    CurrentRoomMap[j][width] = "#" -- last column = #
+    end
+    for i=1,height do
+        widthstring = table.concat(CurrentRoomMap[i],"") -- all characters in a row are printed at once
+        print(widthstring)
+    end
+    if CurrentRoomMap[1][1] ~= nil then
+        print(CurrentRoomMap[1][1])
+    end
 end
+-- Tangent #2: God I hate lua and the fact that maxtrixes just... don't exist. It's all tables within tables.
+-- lua has no: dictionaries, matrixes, classes, and more! Why do I do this to myself?
 --checkinv()
 --playerstatus()
 makegrid()
