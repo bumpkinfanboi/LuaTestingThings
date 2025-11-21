@@ -13,6 +13,11 @@ local demon = {"demon",20,5,sword} -- name, hp, ap, and items
 local gelblob = {"gellatinous blob", 100, 1,} -- name, hp, and ap
 local enemies = {goblin, demon, gelblob}
 
+local CurrentRoomCoords = {0,0}
+local CurrentRoomMap = {}
+CurrentRoomCoords[1] = x
+CurrentRoomCoords[2] = y
+
 local Head = {"Head",35}
 local Torso = {"Torso",85}
 local Stomach = {"Stomach",70}
@@ -72,6 +77,8 @@ end
 function makegrid()
     width = math.random(5,20)*2
     height = math.random(5,20)
+    CurrentRoomCoords[1] = width
+    CurrentRoomCoords[2] = height
     counter = 1
     for i=1,height do
         if counter == 1 or counter == height then
@@ -82,6 +89,19 @@ function makegrid()
         end
         counter = counter + 1
     end
+    counter = 1
+    for i=1,height do
+        CurrentRoomMap[i] = {}
+        for j=1,width do
+        CurrentRoomMap[i][j] = "T"
+        end
+    end
+    counter = 1
+    for i=1,width do
+        
+        counter = counter + 1
+    end
+    print(lineseg)
     counter = 1
 end
 --checkinv()
