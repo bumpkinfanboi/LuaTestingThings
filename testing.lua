@@ -1,5 +1,6 @@
 local counter = 1
 local input = nil
+
 local invsize = 20 -- gonna make a backpack but ill do that later
 local inventory = {}
 local sword = {"sword",1,1} -- name,dmg,weight
@@ -15,6 +16,8 @@ local enemies = {goblin, demon, gelblob}
 
 local CurrentRoomDimensions = {0,0}
 local CurrentRoomMap = {}
+
+local PlayerPosition = {"P",2,2}
 
 local Head = {"Head",35}
 local Torso = {"Torso",85}
@@ -40,7 +43,7 @@ inventory[3] = bandage
 
 -- tangent for those reading this: I put 'input = io.read()' everywhere because if I don't, the next check for input would be the previous line's input.
 -- every time I use io.read() it queries the terminal and the program hangs until a reply is given. this is why I didn't make a function for it, because it makes an unnecessary query and its lame >:(
-function checkinv()
+function CheckInv()
     print("Do you want to check inventory?")
     input = io.read()
     if input == "check inventory" or input == "check" or input == "y" or input == "yes" then
@@ -58,7 +61,7 @@ function checkinv()
     input = nil
     counter = 1
 end
-function playerstatus()
+function PlayerStatus()
     print("Do you want to check status?")
     input = io.read()
         if input == "check status" or input == "check" or input == "y" or input == "yes" then
@@ -72,37 +75,65 @@ function playerstatus()
     input = nil
 end
 
-function makegrid()
+function MakeGrid()
     width = math.random(5,40) -- starting parameters to generate
     height = math.random(5,20)
     CurrentRoomDimensions = {width,height}
     roomsizeXbyY = table.concat(CurrentRoomDimensions," ") -- turning width and height tables to a string
     print(roomsizeXbyY)
     counter = 1
-    for i=1,height do -- creating map, empty space is a period, its height x width
+    for i=1,width do -- creating map, empty space is a period, its width x height
         CurrentRoomMap[i] = {}
-        for j=1,width do
+        for j=1,height do
         CurrentRoomMap[i][j] = "." -- /CurrentRoomMap/Height/Width
         end
     end
     for i=1,width do -- walls
-        CurrentRoomMap[1][i] = "#" -- first row = #
-        CurrentRoomMap[height][i] = "#" -- last row = #
+        CurrentRoomMap[i][1] = "#" -- first row = #
+        CurrentRoomMap[i][height] = "#" -- last row = #
     end
     for j=1,height do
-    CurrentRoomMap[j][1] = "#" -- first column = #
-    CurrentRoomMap[j][width] = "#" -- last column = #
-    end
-    for i=1,height do
-        widthstring = table.concat(CurrentRoomMap[i],"") -- all characters in a row are printed at once
-        print(widthstring)
+    CurrentRoomMap[1][j] = "#" -- first column = #
+    CurrentRoomMap[width][j] = "#" -- last column = #
     end
     if CurrentRoomMap[1][1] ~= nil then
         print(CurrentRoomMap[1][1])
     end
 end
+function MakeDoor(x)
+    DoorCoords = {}
+    for i=1,x do
+        doorside = math.random(1,4) -- 1 = top, 2 = right, 3 = bottom, 4 = left
+        if doorside == 1 then
+            DoorCoords[i] = {"Door", math.random(2,width-1),1 }
+        elseif doorside == 2 then
+            DoorCoords[i] = {"Door", width,math.random(2,height-1)}
+        elseif doorside == 3 then
+            DoorCoords[i] = {"Door", math.random(2,width-1),height}
+        elseif doorside == 4 then
+            DoorCoords[i] = {"Door", 1,math.random(2,height-1)}
+        end
+        CurrentRoomMap[DoorCoords[i][2]][DoorCoords[i][3]] = "D"
+    end
+end
+function PlayerPositionUpdate()
+    if CurrentRoomMap[PlayerPosition[2]][PlayerPosition[3]] == "."
+    then CurrentRoomMap[PlayerPosition[2]][PlayerPosition[3]] = PlayerPosition[1]
+    elseif CurrentRoomMap[PlayerPosition[2]][PlayerPosition[3]] == "D" then
+        print("New room! (not added yet)")
+    end
+end
+function ShowGrid()
+    for i=1,width do
+    widthstring = table.concat(CurrentRoomMap[i],"")
+    print(widthstring)
+    end
+end
 -- Tangent #2: God I hate lua and the fact that maxtrixes just... don't exist. It's all tables within tables.
 -- lua has no: dictionaries, matrixes, classes, and more! Why do I do this to myself?
---checkinv()
---playerstatus()
-makegrid()
+--CheckInv()
+--PlayerStatus()
+MakeGrid()
+MakeDoor(2)
+PlayerPositionUpdate()
+ShowGrid()
