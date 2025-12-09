@@ -5,6 +5,7 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local counter = 1
+local displaystring
 function MakeMapDimensions(x)
     while true do -- checking the next free spot in the AllMaps table and setting that slot as counter value
         if AllMaps[counter] ~= nil then
@@ -57,5 +58,9 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
         RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "D"
     end
 end
+function Display(x,y) -- x reprisents the map selected in allmaps, y reprisents the layer
+    for i=1,MapDimensions[x][2] do
+        if y = 1 then 
+            displaystring = --unfinished
 MakeMapDimensions(1)
-MakeWallsAndDoors(1,0)
+MakeWallsAndDoors(1,1)
