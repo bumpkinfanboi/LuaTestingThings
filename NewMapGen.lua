@@ -5,7 +5,8 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local counter = 1
-local displaystring
+local displaystring = ""
+local test = ""
 function MakeMapDimensions(x)
     while true do -- checking the next free spot in the AllMaps table and setting that slot as counter value
         if AllMaps[counter] ~= nil then
@@ -14,9 +15,13 @@ function MakeMapDimensions(x)
         end
     end
     for i=counter,counter+x do -- if x>1 then this just adds more sequentially, like 2,3,4 instead of 1,2,3 if 1 is alr taken
+        MapDimensions[i] = {}
+        RoomMaps[i] = {}
+        EntityMaps[i] = {}
+        ItemMaps[i] = {}
         AllMaps[i] = {i,MapDimensions[i],RoomMaps[i],EntityMaps[i],ItemMaps[i],DoorPositions[i]}
-        MapDimensions[i][1] = math.random(1,40) -- x by y or width by height
-        MapDimensions[i][2] = math.random(1,20)
+        MapDimensions[i][1] = math.random(3, 40) -- x by y or width by height
+        MapDimensions[i][2] = math.random(3, 20)
         for j=1,MapDimensions[i][1] do -- all of this is just matrix bullshit :)
             RoomMaps[i][j] = {}
             EntityMaps[i][j] = {}
@@ -40,27 +45,33 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
     end
     for k=1,y do -- this is so sphagetti but i think it works
+        DoorPositions[x] = {}
         DoorPositions[x][k] = {} -- random door making
-        DoorPositions[x][k][1] = math.random(1,4) -- which side of room door should be on
+        DoorPositions[x][k][1] = math.random(1, 4) -- which side of room door should be on
         if DoorPositions[x][k][1] == 1 then -- 1 = up, 2 = right, 3 = down, 4 = left
-            DoorPositions[x][k][2] = math.random(2,MapDimensions[x][1]-1)
+            DoorPositions[x][k][2] = math.random(2, MapDimensions[x][1]-1)
             DoorPositions[x][k][3] = 1
         elseif DoorPositions[x][k][1] == 2 then
             DoorPositions[x][k][2] = MapDimensions[x][1]
-            DoorPositions[x][k][3] = math.random(2,MakeMapDimensions[x][2]-1)
+            DoorPositions[x][k][3] = math.random(2, MapDimensions[x][2]-1)
         elseif DoorPositions[x][k][1] == 3 then
-            DoorPositions[x][k][2] = math.random(2,MapDimensions[x][1]-1)
+            DoorPositions[x][k][2] = math.random(2, MapDimensions[x][1]-1)
             DoorPositions[x][k][3] = MapDimensions[x][2]
         elseif DoorPositions[x][k][1] == 4 then
             DoorPositions[x][k][2] = 1
-            DoorPositions[x][k][3] = math.random(2,MapDimensions[x][2]-1)
+            DoorPositions[x][k][3] = math.random(2, MapDimensions[x][2]-1)
         end
         RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "D"
     end
 end
-function Display(x,y) -- x reprisents the map selected in allmaps, y reprisents the layer
-    for i=1,MapDimensions[x][2] do
-        if y = 1 then 
-            displaystring = --unfinished
-MakeMapDimensions(1)
+function Display(x,y) -- x = map, y = layer
+    for i=1,MapDimensions[x][1] do
+    displaystring = table.concat(AllMaps[x][y+2][i]) -- dont print map number or size
+    print(displaystring)
+    end
+end
+MakeMapDimensions(2)
 MakeWallsAndDoors(1,1)
+MakeWallsAndDoors(2,1)
+Display(1,1) 
+Display(2,1)
