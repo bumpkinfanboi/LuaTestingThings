@@ -44,10 +44,18 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
     for i=1,MapDimensions[x][1] do
         RoomMaps[x][i][1] = "#"
         RoomMaps[x][i][MapDimensions[x][2]] = "#"
+        EntityMaps[x][i][1] = "#"
+        EntityMaps[x][i][MapDimensions[x][2]] = "#"
+        ItemMaps[x][i][1] = "#"
+        ItemMaps[x][i][MapDimensions[x][2]] = "#"
     end
     for j=1,MapDimensions[x][2] do
         RoomMaps[x][1][j] = "#"
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
+        EntityMaps[x][1][j] = "#"
+        EntityMaps[x][MapDimensions[x][1]][j] = "#"
+        ItemMaps[x][1][j] = "#"
+        ItemMaps[x][MapDimensions[x][1]][j] = "#"
     end
     for k=1,y do -- this is so sphagetti but i think it works
         DoorPositions[x] = {}
