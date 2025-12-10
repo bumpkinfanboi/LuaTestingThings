@@ -8,9 +8,10 @@ local ItemsInPlay = {}
 local sword = {"sword",1,2} -- name, dmg, AP cost
 local shield = {"shield",2,4} -- name, dmgresist, AP cost
 local bandage = {"bandage",5,1} -- name, HPrestore, AP cost
-local Items = {sword,shield,bandage}
+local items = {sword,shield,bandage}
 local counter = 1
 local displaystring = ""
+local displaystring2 = ""
 function MakeMapDimensions(x)
     while true do -- checking the next free spot in the AllMaps table and setting that slot as counter value
         if AllMaps[counter] ~= nil then
@@ -43,10 +44,18 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
     for i=1,MapDimensions[x][1] do
         RoomMaps[x][i][1] = "#"
         RoomMaps[x][i][MapDimensions[x][2]] = "#"
+        EntityMaps[x][i][1] = "#"
+        EntityMaps[x][i][MapDimensions[x][2]] = "#"
+        ItemMaps[x][i][1] = "#"
+        ItemMaps[x][i][MapDimensions[x][2]] = "#"
     end
     for j=1,MapDimensions[x][2] do
         RoomMaps[x][1][j] = "#"
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
+        EntityMaps[x][1][j] = "#"
+        EntityMaps[x][MapDimensions[x][1]][j] = "#"
+        ItemMaps[x][1][j] = "#"
+        ItemMaps[x][MapDimensions[x][1]][j] = "#"
     end
     for k=1,y do -- this is so sphagetti but i think it works
         DoorPositions[x] = {}
@@ -69,6 +78,8 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
     end
 end
 function RandomItemGeneration(map_request,num_items)
+    counter = 1
+    ItemsInPlay[map_request] = {}
     while true do
         if ItemsInPlay[map_request][counter] ~= nil then
             counter = counter + 1
@@ -89,10 +100,29 @@ function Display(x,y) -- x = map, y = layer
     print(displaystring)
     end
 end
+function DisplayAll(map_select)
+    for i=1,MapDimensions[map_select][1] do
+    if table.concat(AllMaps[map_select][3][i]) == table.concat(AllMaps[map_select][4][i]) and table.concat(AllMaps[map_select][3][i]) == table.concat(AllMaps[map_select][5][i]) then
+        displaystring2 = table.concat(AllMaps[map_select][3][i])
+        print(displaystring2)
+    else for j=1,MapDimensions[map_select][1] do
+        if AllMaps[map_select][3][j] == AllMaps[map_select][4][j] and AllMaps[map_select][3][j] == AllMaps[map_select][5][j] then
+            displaystring2 = displaystring2 + AllMaps[map_select][3][j]
+            elseif AllMaps[map_select][4][j] == "." then
+                displaystring2 = displaystring2 + AllMaps[map_select][4][j]
+            else displaystring2 = displaystring2 + AllMaps[map_select][5][j]
+            end
+        end
+        print(displaystring2)
+    end
+    counter = 1
+    end
+end
 MakeMapDimensions(2)
 MakeWallsAndDoors(1,1)
 MakeWallsAndDoors(2,1)
 RandomItemGeneration(1,3)
 Display(1,1) 
-Display(1,2)
+--Display(1,2)
 Display(1,3)
+DisplayAll(1)
