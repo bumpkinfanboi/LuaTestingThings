@@ -103,11 +103,11 @@ end
 function DisplayAllLayers(map_select)
     for i=1,MapDimensions[map_select][1] do
         for j=1,MapDimensions[map_select][2] do
-        if AllMaps[map_select][3][i][j] == "." then --if room map tile empty
-            if AllMaps[map_select][4][i][j] == "." then -- if no entities on tile
+            if AllMaps[map_select][3][i][j] == "." then --if room map tile empty
+                if AllMaps[map_select][4][i][j] == "." then -- if no entities on tile
                 displaystring2 = displaystring2 .. AllMaps[map_select][5][i][j] -- display item on tile
-            else displaystring2 = displaystring2 ..AllMaps[map_select][4][i][j] -- if entity display entity tile
-            end
+                else displaystring2 = displaystring2 ..AllMaps[map_select][4][i][j] -- if entity display entity tile
+                end
             else displaystring2 = displaystring2 .. AllMaps[map_select][3][i][j] -- if floor tile (door or map) display that
             end
         end
@@ -115,12 +115,12 @@ function DisplayAllLayers(map_select)
         displaystring2 = "" -- so it doesnt stack
     end
 end
-MakeMapDimensions(2)
+MakeMapDimensions(2) -- all these functions can be changed, ill make a config file later
 MakeWallsAndDoors(1,1)
 MakeWallsAndDoors(2,1)
 RandomItemGeneration(1,3)
 RandomItemGeneration(2,10)
-Display(1,1) 
---Display(1,2)
+Display(1,1)
+Display(1,2)
 Display(1,3)
 DisplayAllLayers(2)
