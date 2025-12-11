@@ -1,27 +1,30 @@
-Updated README, 12/9/2025
+Updated README, 12/11/2025
 
 I am making a tiny shitty little rouge clone just to get the basics of lua down, so don't expect the moon.
 I work on this when I want, It's been about a month and I have >200 lines of code.
 This is eventually going to be backported to Roblox Studio to be used in another project I'm working on (I barely started that, need to do this first)
 
-How to run: don't
+This program runs in ANY TERMINAL, as long as you have lua installed.
 
-How to actually run: Runs in the terminal, you need to install lua 5.4 for it.
+In order to run this program, you need to download the code from the github repository and unzip the file. You need to run the file called NewMapGen.lua
 
-Step by step for
-Linux:
+In order to install lua and run the program in linux, you need to run:
 
-  sudo apt install lua5.4 (or use any other package manager you want)
-  
-  lua [insert filename here].lua 
-  
-Windows: https://stackoverflow.com/questions/16691082/how-to-install-lua-on-windows
-  
-  (I just use WSL, lol)
+sudo apt install lua5.4
+
+lua PATH/TO/FILE/NewMapGen.lua
+
+In order to install this program on Windows 11, you need to run:
+
+winget "lua for windows"
+
+lua PATH/TO/FILE/NewMapGet.lua
+
+
+The program has a "help" command, so by typing help you can see what commands are available.
 
 
 TODO LIST:
-Finish reworking mapgen
 
 Add multiple rooms and going back and forth between them
 
@@ -31,13 +34,11 @@ Add enemies
 
 Add staircases to new floors
 
-Add items
+Add player movement
 
-Implement hunger/thirst and the player health system
+Fix bugs
 
-Add a quit command
-
-Add a constant query so you don't have to rerun the program (oops!)
+Make the program less obtuse and able to be configured without a text editor 
 
 + a lot more
 
