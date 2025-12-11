@@ -217,7 +217,7 @@ function QueryUser()
             else print("fucked")
             end
         elseif input == "help" then
-            print("Commands: \n quit - Ends the program. \n ")
+            print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated. \n More to come!")
         end
     end
 end
@@ -232,3 +232,4 @@ QueryUser()
 --Display(1,2)
 --Display(1,3)
 --DisplayAllLayers(1)
+
