@@ -1,3 +1,6 @@
+--I'm going to throw some forewords here: This code sucks. I hate it, and I'm the damned fool that wrote it. I moved all the important bits from the old file to this one, because it was easier to integrate. This is the defacto main file now I guess. It's interesting to see as you go down, just how my code changes over time. This was a LOT more work than it looks. I'm definetely not proud of substituting X and Y for 1 and 2, and having the inputs for functions be single-letter variables, but I've got bigger fish to fry than fix that. It works, and that's what matters. 
+local tempstorage = {} -- Fun Fact: Tables are just infinite registers :)
+
 local AllMaps = {}
 local RoomMaps = {}
 local EntityMaps = {}
@@ -5,10 +8,61 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local ItemsInPlay = {}
+
 local sword = {"sword",1,2} -- name, dmg, AP cost
 local shield = {"shield",2,4} -- name, dmgresist, AP cost
 local bandage = {"bandage",5,1} -- name, HPrestore, AP cost
 local items = {sword,shield,bandage}
+local inventory = {}
+local invsize = 20
+
+local Head = {"Head",35}
+local Torso = {"Torso",85}
+local Stomach = {"Stomach",70}
+local Rarm = {"Right Arm",60}
+local Larm = {"Left Arm",60}
+local Rleg = {"Right Leg",65}
+local Lleg = {"Left Leg",65}
+local PlayerFood = 100
+local PlayerWater = 100
+local HPpercent = 100
+local PlayerPosition = {}
+local OverallHP = {"OverallHP",HPpercent,PlayerFood,PlayerWater,Head,Torso,Stomach,Rarm,Larm,Rleg,Lleg}
+local player = {"UnnamedPlayer",PlayerPosition,OverallHP[2],10,inventory,invsize} -- list name, player chosen name, %value of total hp, and AP
+function HPupdate() -- technically player is at 100% until this calc, but whatevz
+    HPpercent = ((OverallHP[5][2] + OverallHP[6][2] + OverallHP[7][2] + OverallHP[8][2] + OverallHP[9][2] + OverallHP[10][2] + OverallHP[11][2])/440)*100
+    HPpercent = math.floor(HPpercent) --rounding down to nearest whole number, I dont need 8figs of precision
+end
+function CheckInv()
+    print("Do you want to check inventory?")
+    input = io.read()
+    if input == "check inventory" or input == "check" or input == "y" or input == "yes" then
+        for i=1,invsize do
+            if inventory[i] == nil then
+                inventory[i] = "empty"
+            end
+            if inventory[i] == "empty" then
+                print("slot "..i.." empty") else
+                print("slot "..i.." contains "..inventory[i][1]) -- inv -> 1st of items list, which is always name!!
+            end
+        end
+    end
+    input = nil
+end
+function CheckPlayerStatus()
+    print("Do you want to check status?")
+    input = io.read()
+        if input == "check status" or input == "check" or input == "y" or input == "yes" then
+            print("Status report: "..PlayerFood.."/100 nutrition, "..PlayerWater.."/100 hydration, "..HPpercent.."% health remaining. Would you like a full injury diagnostic?")
+            input = nil
+            input = io.read()
+            if input == "diagnostic" or input == "y" or input == "yes" then
+            print("Diagnostic results: \n Head is at "..Head[2].."/35. \n Torso is at "..Torso[2].."/85. \n Stomach is at "..Stomach[2].."/70. \n Right arm is at "..Rarm[2].."/60. \n Left arm is at "..Larm[2].."/60. \n Right leg is at "..Rleg[2].."/65. \n Left leg is at "..Lleg[2].."/65. \n Current status effects: N/A")
+            end
+        end
+    input = nil
+end
+
 local counter = 1
 local displaystring = ""
 local displaystring2 = ""
@@ -40,7 +94,7 @@ function MakeMapDimensions(x)
     end
     counter = 1
 end
-function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents the amount of doors requested
+function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents the amount of doors requested, no I wont fix this mess, it works.
     for i=1,MapDimensions[x][1] do
         RoomMaps[x][i][1] = "#"
         RoomMaps[x][i][MapDimensions[x][2]] = "#"
@@ -94,6 +148,13 @@ function RandomItemGeneration(map_request,num_items)
         ItemMaps[map_request][ItemsInPlay[map_request][counter+i][2]][ItemsInPlay[map_request][counter+i][3]] = ItemsInPlay[map_request][counter+i][1]
     end
 end
+function PlayerUpdate() -- add more stuff as needed
+    HPupdate()
+    PlayerPosition[1] = 3 -- X
+    PlayerPosition[2] = 5 -- Y
+    PlayerPosition[3] = 1 -- Map
+    AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
+end
 function Display(x,y) -- x = map, y = layer
     for i=1,MapDimensions[x][1] do
     displaystring = table.concat(AllMaps[x][y+2][i]) -- dont print map number or size
@@ -115,12 +176,59 @@ function DisplayAllLayers(map_select)
         displaystring2 = "" -- so it doesnt stack
     end
 end
-MakeMapDimensions(2) -- all these functions can be changed, ill make a config file later
-MakeWallsAndDoors(1,1)
-MakeWallsAndDoors(2,1)
-RandomItemGeneration(1,3)
-RandomItemGeneration(2,10)
-Display(1,1)
-Display(1,2)
-Display(1,3)
-DisplayAllLayers(2)
+function GenerateMap(input_,door_request_,item_request_)
+    MakeMapDimensions(input_)
+    MakeWallsAndDoors(input_,door_request_)
+    RandomItemGeneration(input_,item_request_)
+end
+function QueryUser()
+    while true do
+    print("querying")
+    input = io.read()
+        if input == "quit" then
+        print("Quitting!")
+        break
+        elseif AllMaps[1] == nil or input == "generatemap" then
+            print("Please generate a map! Would you like to make one?")
+            input = io.read()
+            if input == "yes" or input == "y" then
+                print("What mapnumber do you want? (1 usually)")
+                input = io.read()
+                tempstorage[1] = tonumber(input)
+                print("How many doors do you want? (only one and two are tested)")
+                input = io.read()
+                tempstorage[2] = tonumber(input)
+                print("How many items do you want? (only 1-3 are tested)")
+                input = io.read()
+                tempstorage[3] = tonumber(input)
+                GenerateMap(tempstorage[1],tempstorage[2],tempstorage[3])
+                print("Map generated!")
+                tempstorage = {}
+            end
+        elseif input == "checkinv" then
+            CheckInv()
+        elseif input == "checkstatus" then
+            CheckPlayerStatus()
+        elseif input == "display" then
+            print("Which map to display?")
+            input = io.read()
+            if type(tonumber(input)) == "number" then
+            DisplayAllLayers(tonumber(input))
+            else print("fucked")
+            end
+        elseif input == "help" then
+            print("Commands: \n quit - Ends the program. \n ")
+        end
+    end
+end
+--MakeMapDimensions(2) -- all these functions can be changed, ill make a config file later
+--MakeWallsAndDoors(1,1)
+--MakeWallsAndDoors(2,1)
+--RandomItemGeneration(1,3)
+--RandomItemGeneration(2,10)
+--PlayerUpdate()
+QueryUser()
+--Display(1,1)
+--Display(1,2)
+--Display(1,3)
+--DisplayAllLayers(1)
