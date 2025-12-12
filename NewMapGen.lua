@@ -8,6 +8,7 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local ItemsInPlay = {}
+local firstmap = 0
 
 local sword = {"sword",1,2} -- name, dmg, AP cost
 local shield = {"shield",2,4} -- name, dmgresist, AP cost
@@ -150,9 +151,11 @@ function RandomItemGeneration(map_request,num_items)
 end
 function PlayerUpdate() -- add more stuff as needed
     HPupdate()
+    if firstmap <= 2 then
     PlayerPosition[1] = 3 -- X
     PlayerPosition[2] = 5 -- Y
     PlayerPosition[3] = 1 -- Map
+    end
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
 end
 function Display(x,y) -- x = map, y = layer
@@ -183,15 +186,16 @@ function GenerateMap(input_,door_request_,item_request_)
 end
 function QueryUser()
     while true do
-    print("querying")
+    print("Querying, use help for more information")
     input = io.read()
         if input == "quit" then
         print("Quitting!")
         break
-        elseif AllMaps[1] == nil or input == "generatemap" then
-            print("Please generate a map! Would you like to make one?")
+        elseif input == "generatemap" then
+            print("Generating a new map. Confirm?")
             input = io.read()
             if input == "yes" or input == "y" then
+                firstmap = firstmap + 1
                 print("What mapnumber do you want? (1 usually)")
                 input = io.read()
                 tempstorage[1] = tonumber(input)
@@ -210,14 +214,29 @@ function QueryUser()
         elseif input == "checkstatus" then
             CheckPlayerStatus()
         elseif input == "display" then
-            print("Which map to display?")
+            if AllMaps[1] == nil then
+                print("Please generate a map first!")
+            else print("Which map to display?")
+            PlayerUpdate()
             input = io.read()
             if type(tonumber(input)) == "number" then
             DisplayAllLayers(tonumber(input))
             else print("fucked")
             end
+            end
         elseif input == "help" then
             print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (1 is default). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n More to come!")
+        elseif string.match(input, "move") then
+            print("moving")
+            if string.match(input, "up") then
+                print("moving up")
+            elseif string.match(input, "right") then
+                print("moving right")
+            elseif string.match(input, "down") then
+                print("moving down")
+            elseif string.match(input, "left") then
+                print("moving left")
+            end
         end
     end
 end
