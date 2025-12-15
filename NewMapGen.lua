@@ -8,7 +8,9 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local ItemsInPlay = {}
-local firstmap = 0
+local firstmap_ = true
+local mapsgenerated_ = 0
+local firstturn_ = true
 
 local sword = {"sword",1,2} -- name, dmg, AP cost
 local shield = {"shield",2,4} -- name, dmgresist, AP cost
@@ -68,13 +70,7 @@ local counter = 1
 local displaystring = ""
 local displaystring2 = ""
 function MakeMapDimensions(x)
-    while true do -- checking the next free spot in the AllMaps table and setting that slot as counter value
-        if AllMaps[counter] ~= nil then
-            counter = counter + 1
-        else break
-        end
-    end
-    for i=counter,counter+x do -- if x>1 then this just adds more sequentially, like 2,3,4 instead of 1,2,3 if 1 is alr taken
+    for i=x,x+0 do -- This used to add more maps sequentially, but then it just asks directly what map slot you want, so this shouldn't be a for loop but I am lazy and don't want to rewrite this. Hence the x=x+0.
         MapDimensions[i] = {}
         RoomMaps[i] = {}
         EntityMaps[i] = {}
@@ -107,10 +103,6 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
     for j=1,MapDimensions[x][2] do
         RoomMaps[x][1][j] = "#"
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
-        EntityMaps[x][1][j] = "#"
-        EntityMaps[x][MapDimensions[x][1]][j] = "#"
-        ItemMaps[x][1][j] = "#"
-        ItemMaps[x][MapDimensions[x][1]][j] = "#"
     end
     for k=1,y do -- this is so sphagetti but i think it works
         DoorPositions[x] = {}
@@ -151,14 +143,19 @@ function RandomItemGeneration(map_request,num_items)
 end
 function PlayerUpdate() -- add more stuff as needed
     HPupdate()
-    if firstmap <= 2 then
+    if firstmap_ == true and firstturn_ == true then
+    firstturn_ = false
     PlayerPosition[1] = 3 -- X
-    PlayerPosition[2] = 5 -- Y
+    PlayerPosition[2] = 4 -- Y
     PlayerPosition[3] = 1 -- Map
+    AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
     end
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
+    if AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] == "P" and AllMaps[PlayerPosition[3]][3][PlayerPosition[1]][PlayerPosition[2]] == "D" then
+        print("MAKE A NEW MAP (not added yet, soz)") -- Doors
+    end
 end
-function Display(x,y) -- x = map, y = layer
+function Display(x,y) -- x = map, y = layer DEPRICIATED
     for i=1,MapDimensions[x][1] do
     displaystring = table.concat(AllMaps[x][y+2][i]) -- dont print map number or size
     print(displaystring)
@@ -172,7 +169,13 @@ function DisplayAllLayers(map_select)
                 displaystring2 = displaystring2 .. AllMaps[map_select][5][i][j] -- display item on tile
                 else displaystring2 = displaystring2 ..AllMaps[map_select][4][i][j] -- if entity display entity tile
                 end
-            else displaystring2 = displaystring2 .. AllMaps[map_select][3][i][j] -- if floor tile (door or map) display that
+            elseif AllMaps[map_select][3][i][j] == "D" then
+                if AllMaps[map_select][4][i][j] == "." and AllMaps[map_select][5][i][j] == "."  then
+                displaystring2 = displaystring2 .. AllMaps[map_select][3][i][j]
+                elseif AllMaps[map_select][4][i][j] ~= "." then
+                displaystring2 = displaystring2 ..AllMaps[map_select][4][i][j] -- if entity display entity tile
+                end
+            else displaystring2 = displaystring2 .. AllMaps[map_select][3][i][j] -- backup display or displaying walls
             end
         end
         print(displaystring2)
@@ -195,7 +198,10 @@ function QueryUser()
             print("Generating a new map. Confirm?")
             input = io.read()
             if input == "yes" or input == "y" then
-                firstmap = firstmap + 1
+                if mapsgenerated_ > 0 then
+                    firstmap_ = false
+                end
+                mapsgenerated_ = mapsgenerated_ + 1
                 print("What mapnumber do you want? (1 usually)")
                 input = io.read()
                 tempstorage[1] = tonumber(input)
@@ -213,16 +219,16 @@ function QueryUser()
             CheckInv()
         elseif input == "checkstatus" then
             CheckPlayerStatus()
-        elseif input == "display" then
+        elseif input == "display" then 
+            PlayerUpdate() -- just to make sure that at least the player is up to date, fix later :)
             if AllMaps[1] == nil then
                 print("Please generate a map first!")
             else print("Which map to display?")
-            PlayerUpdate()
+            end
             input = io.read()
             if type(tonumber(input)) == "number" then
             DisplayAllLayers(tonumber(input))
             else print("fucked")
-            end
             end
         elseif input == "help" then
             print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (1 is default). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n More to come!")
@@ -230,13 +236,22 @@ function QueryUser()
             print("moving")
             if string.match(input, "up") then
                 print("moving up")
+                AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "." -- this is fine because entities cant be on the same tile, probably. This edits the map and says "Hey! Delete player map tile. And then change the player coordinate to account for moving. Then add the player symbol to the new map coordinate tile. (last part in PlayerUpdate() function)
+                PlayerPosition[1] = PlayerPosition[1] - 1 -- although this does suck and I want to make a dedicated function for moving so I can account for edge cases seperately. (e.g. denying movement because other entity on tile)
             elseif string.match(input, "right") then
                 print("moving right")
+                AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
+                PlayerPosition[2] = PlayerPosition[2] + 1
             elseif string.match(input, "down") then
                 print("moving down")
+                AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
+                PlayerPosition[1] = PlayerPosition[1] + 1
             elseif string.match(input, "left") then
                 print("moving left")
+                AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
+                PlayerPosition[2] = PlayerPosition[2] - 1
             end
+            PlayerUpdate()
         end
     end
 end
