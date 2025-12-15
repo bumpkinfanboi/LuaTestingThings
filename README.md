@@ -1,7 +1,7 @@
 Updated README, 12/11/2025
 
 I am making a tiny shitty little rouge clone just to get the basics of lua down, so don't expect the moon.
-I work on this when I want, It's been about a month and I have >200 lines of code.
+I work on this when I want, It's been about two months and I have >400 lines of code.
 This is eventually going to be backported to Roblox Studio to be used in another project I'm working on (I barely started that, need to do this first)
 
 This program runs in ANY TERMINAL, as long as you have lua installed.
@@ -34,11 +34,13 @@ Add enemies
 
 Add staircases to new floors
 
-Add player movement
-
 Fix bugs
 
-Make the program less obtuse and able to be configured without a text editor 
+Make the program less obtuse and able to be configured without a text editor (half done)
+
+Fully change the inputs to single-line commands 
+
+Add item pickups
 
 + a lot more
 
