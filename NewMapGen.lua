@@ -219,7 +219,7 @@ function QueryUser()
         elseif string.match(input, "display") then
             print("displaying")
             PlayerUpdate()
-            maptodisplay_ = tonumber(string.match(input, "%d+"))
+            maptodisplay_ = tonumber(string.match(input, "%d+")) -- %d+ = first number in a string (?)
             DisplayAllLayers(maptodisplay_)
         elseif input == "help" then
             print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (e.g. display 1). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n More to come!")
