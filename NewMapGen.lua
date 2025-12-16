@@ -1,5 +1,8 @@
 --I'm going to throw some forewords here: This code sucks. I hate it, and I'm the damned fool that wrote it. I moved all the important bits from the old file to this one, because it was easier to integrate. This is the defacto main file now I guess. It's interesting to see as you go down, just how my code changes over time. This was a LOT more work than it looks. I'm definetely not proud of substituting X and Y for 1 and 2, and having the inputs for functions be single-letter variables, but I've got bigger fish to fry than fix that. It works, and that's what matters. 
 local tempstorage = {} -- Fun Fact: Tables are just infinite registers :)
+local counter = 1
+local displaystring = ""
+local displaystring2 = ""
 
 local AllMaps = {}
 local RoomMaps = {}
@@ -67,10 +70,6 @@ function CheckPlayerStatus()
         end
     input = nil
 end
-
-local counter = 1
-local displaystring = ""
-local displaystring2 = ""
 function MakeMapDimensions(x)
     for i=x,x+0 do -- This used to add more maps sequentially, but then it just asks directly what map slot you want, so this shouldn't be a for loop but I am lazy and don't want to rewrite this. Hence the x=x+0.
         MapDimensions[i] = {}
@@ -211,7 +210,7 @@ function RoomTransition() -- checks if player is on a door, and transitions to n
         end
     end
 end
-function QueryUser()
+function QueryUser() -- this is less a function, and more the main program loop, just in function form (yes I know functions over 50 lines is bad)
     while true do
     print("Querying, use help for more information")
     input = io.read()
@@ -281,16 +280,5 @@ function QueryUser()
         end
     end
 end
---MakeMapDimensions(2) -- all these functions can be changed, ill make a config file later
---MakeWallsAndDoors(1,1)
---MakeWallsAndDoors(2,1)
---RandomItemGeneration(1,3)
---RandomItemGeneration(2,10)
---PlayerUpdate()
 QueryUser()
---Display(1,1)
---Display(1,2)
---Display(1,3)
---DisplayAllLayers(1)
-
-
+-- note to self: add a config file ASAP
