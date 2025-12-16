@@ -95,8 +95,8 @@ function MakeMapDimensions(x)
 end
 function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents the amount of doors requested, no I wont fix this mess, it works.
     DoorPositions[x] = {}
-    for l=1,y do
-    DoorPositions[x][l] = {}
+    for l=1,y do -- band-aid fix for doorpositions[x][k] so there is a table but it doesnt overwrite itself in the for loop
+    DoorPositions[x][l] = {} -- pretend this says doorpositions[x][k], they are the same value
     end
     DoorsInMap[x] = y
     for i=1,MapDimensions[x][1] do
@@ -107,7 +107,7 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
         RoomMaps[x][1][j] = "#"
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
     end
-    for k=1,y do -- this is so sphagetti but i think it works (it iterates upon itself! only the most recent door is saved)
+    for k=1,y do -- this is so sphagetti but i think it works (I think I fixed SOME this...)
         DoorPositions[x][k][1] = math.random(1, 4) -- which side of room door should be on
         if DoorPositions[x][k][1] == 1 then -- 1 = up, 2 = right, 3 = down, 4 = left
             DoorPositions[x][k][2] = math.random(2, MapDimensions[x][1]-1)
@@ -122,10 +122,13 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
             DoorPositions[x][k][2] = 1
             DoorPositions[x][k][3] = math.random(2, MapDimensions[x][2]-1)
         end
-        RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "D"
+        if k == 1 and x ~= 1 then
+        RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "B"
+        else RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "D"
+        end
     end
-    print(table.concat(DoorPositions[x][1]))
-    print(table.concat(DoorPositions[x][2]))
+    print("debug info "..table.concat(DoorPositions[x][1]))
+    print("debug info "..table.concat(DoorPositions[x][2]))
 end
 function RandomItemGeneration(map_request,num_items)
     counter = 1
@@ -192,9 +195,13 @@ function RoomTransition() -- checks if player is on a door, and transitions to n
     for i=1,DoorsInMap[PlayerPosition[3]] do
         if PlayerPosition[1] == DoorPositions[PlayerPosition[3]][i][2] and PlayerPosition[2] == DoorPositions[PlayerPosition[3]][i][3] then
             print("On door "..i)
-            if i == 1 and PlayerPosition[3] > 1 then
-                PlayerPosition = PlayerPosition -1 
+            if i == 1 and PlayerPosition[3] > 1 then -- sends you back down a map if its door 1
+                PlayerPosition[3] = PlayerPosition[3] -1
+                PlayerPosition[1] = 2 -- keeping these player position setters different so they can be swapped out later (for spawning on a door or something)
+                PlayerPosition[2] = 2
             else PlayerPosition[3] = PlayerPosition[3] + 1 -- changes player map
+            PlayerPosition[1] = 2
+            PlayerPosition[2] = 2
             end
             if AllMaps[PlayerPosition[3]] == nil then
             GenerateMap(PlayerPosition[3],2,3)
@@ -222,7 +229,7 @@ function QueryUser()
                 print("What mapnumber do you want? Always start with 1, then display 1 before generating another map.")
                 input = io.read()
                 tempstorage[1] = tonumber(input)
-                print("How many doors do you want? (only one and two are tested)")
+                print("How many doors do you want? (Two minimum)")
                 input = io.read()
                 tempstorage[2] = tonumber(input)
                 print("How many items do you want? (only 1-3 are tested)")
