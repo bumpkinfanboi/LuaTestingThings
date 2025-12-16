@@ -1,7 +1,7 @@
 --I'm going to throw some forewords here: This code sucks. I hate it, and I'm the damned fool that wrote it. I moved all the important bits from the old file to this one, because it was easier to integrate. This is the defacto main file now I guess. It's interesting to see as you go down, just how my code changes over time. This was a LOT more work than it looks. I'm definetely not proud of substituting X and Y for 1 and 2, and having the inputs for functions be single-letter variables, but I've got bigger fish to fry than fix that. It works, and that's what matters. 
 local tempstorage = {} -- Fun Fact: Tables are just infinite registers :)
 local counter = 1
-local displaystring = ""
+local displaystring = "" -- just... don't ask.
 local displaystring2 = ""
 
 local AllMaps = {}
@@ -12,9 +12,9 @@ local MapDimensions = {}
 local DoorPositions = {}
 local ItemsInPlay = {}
 local firstmap_ = true
-local mapsgenerated_ = 0
+local mapsgenerated_ = 0 -- mostly useless, but adding a statistic is neat ig idfk
 local firstturn_ = true
-local maptodisplay_
+local maptodisplay_ -- probably depriciated
 local DoorsInMap = {}
 
 local sword = {"sword",1,2} -- name, dmg, AP cost
@@ -155,7 +155,7 @@ function PlayerUpdate() -- add more stuff as needed
     PlayerPosition[3] = 1 -- Map
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
     end
-    RoomTransition()
+    RoomTransition() -- this is a CHECK for room transition, it only happens on doors
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
 end
 function Display(x,y) -- x = map, y = layer DEPRICIATED
@@ -258,7 +258,7 @@ function QueryUser() -- this is less a function, and more the main program loop,
                 PlayerPosition[1] = PlayerPosition[1] - 1 -- although this does suck and I want to make a dedicated function for moving so I can account for edge cases seperately. (e.g. denying movement because other entity on tile)
                 end
             elseif string.match(input, "right") then
-                for i=1,tonumber(string.match(input, "%d+")) do
+                for i=1,tonumber(string.match(input, "%d+")) do -- i need for loops but i dont need the variable :)
                 print("moving right")
                 AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
                 PlayerPosition[2] = PlayerPosition[2] + 1
@@ -282,3 +282,4 @@ function QueryUser() -- this is less a function, and more the main program loop,
 end
 QueryUser()
 -- note to self: add a config file ASAP
+-- note: this is trying to be as back-compatible as possible to Luau (roblox), so im trying to minimise the io.read()'s and stuff like that.
