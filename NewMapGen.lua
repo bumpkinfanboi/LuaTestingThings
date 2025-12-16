@@ -153,8 +153,8 @@ function PlayerUpdate() -- add more stuff as needed
     PlayerPosition[3] = 1 -- Map
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
     end
-    AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
     RoomTransition()
+    AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
 end
 function Display(x,y) -- x = map, y = layer DEPRICIATED
     for i=1,MapDimensions[x][1] do
@@ -188,12 +188,19 @@ function GenerateMap(input_,door_request_,item_request_)
     MakeWallsAndDoors(input_,door_request_)
     RandomItemGeneration(input_,item_request_)
 end
-function RoomTransition() -- checks if player is on a door, and which one.
+function RoomTransition() -- checks if player is on a door, and transitions to next room
     for i=1,DoorsInMap[PlayerPosition[3]] do
         if PlayerPosition[1] == DoorPositions[PlayerPosition[3]][i][2] and PlayerPosition[2] == DoorPositions[PlayerPosition[3]][i][3] then
-        print("On door "..i)
-        PlayerPosition[3] = PlayerPosition[3] + 1
-        GenerateMap(PlayerPosition[3],2,3)
+            print("On door "..i)
+            if i == 1 and PlayerPosition[3] > 1 then
+                PlayerPosition = PlayerPosition -1 
+            else PlayerPosition[3] = PlayerPosition[3] + 1 -- changes player map
+            end
+            if AllMaps[PlayerPosition[3]] == nil then
+            GenerateMap(PlayerPosition[3],2,3)
+            PlayerPosition[1] = 2
+            PlayerPosition[2] = 2
+            end
         end
     end
 end
@@ -235,25 +242,33 @@ function QueryUser()
             maptodisplay_ = tonumber(string.match(input, "%d+")) -- %d+ = first number in a string (?)
             DisplayAllLayers(maptodisplay_)
         elseif input == "help" then
-            print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (e.g. display 1). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n More to come!")
+            print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (e.g. display 1). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n move - moves the player how many tiles you want in a given direction (e.g. move up 1) \n ")
         elseif string.match(input, "move") then
             print("moving")
             if string.match(input, "up") then
+                for i=1,tonumber(string.match(input, "%d+")) do
                 print("moving up")
                 AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "." -- this is fine because entities cant be on the same tile, probably. This edits the map and says "Hey! Delete player map tile. And then change the player coordinate to account for moving. Then add the player symbol to the new map coordinate tile. (last part in PlayerUpdate() function)
                 PlayerPosition[1] = PlayerPosition[1] - 1 -- although this does suck and I want to make a dedicated function for moving so I can account for edge cases seperately. (e.g. denying movement because other entity on tile)
+                end
             elseif string.match(input, "right") then
+                for i=1,tonumber(string.match(input, "%d+")) do
                 print("moving right")
                 AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
                 PlayerPosition[2] = PlayerPosition[2] + 1
+                end
             elseif string.match(input, "down") then
+                for i=1,tonumber(string.match(input, "%d+")) do
                 print("moving down")
                 AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
                 PlayerPosition[1] = PlayerPosition[1] + 1
+                end
             elseif string.match(input, "left") then
+                for i=1,tonumber(string.match(input, "%d+")) do
                 print("moving left")
                 AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "."
                 PlayerPosition[2] = PlayerPosition[2] - 1
+                end
             end
             PlayerUpdate()
         end
