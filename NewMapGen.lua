@@ -154,10 +154,7 @@ function PlayerUpdate() -- add more stuff as needed
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
     end
     AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] = "P"
-    if AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] == "P" and AllMaps[PlayerPosition[3]][3][PlayerPosition[1]][PlayerPosition[2]] == "D" then
-        print("MAKE A NEW MAP (not added yet, soz)") -- Doors
-    end
-    CheckRoomTransition()
+    RoomTransition()
 end
 function Display(x,y) -- x = map, y = layer DEPRICIATED
     for i=1,MapDimensions[x][1] do
@@ -191,10 +188,12 @@ function GenerateMap(input_,door_request_,item_request_)
     MakeWallsAndDoors(input_,door_request_)
     RandomItemGeneration(input_,item_request_)
 end
-function CheckRoomTransition() -- checks if player is on a door, and which one.
+function RoomTransition() -- checks if player is on a door, and which one.
     for i=1,DoorsInMap[PlayerPosition[3]] do
         if PlayerPosition[1] == DoorPositions[PlayerPosition[3]][i][2] and PlayerPosition[2] == DoorPositions[PlayerPosition[3]][i][3] then
         print("On door "..i)
+        PlayerPosition[3] = PlayerPosition[3] + 1
+        GenerateMap(PlayerPosition[3],2,3)
         end
     end
 end
