@@ -12,6 +12,7 @@ local firstmap_ = true
 local mapsgenerated_ = 0
 local firstturn_ = true
 local maptodisplay_
+local DoorsInMap = {}
 
 local sword = {"sword",1,2} -- name, dmg, AP cost
 local shield = {"shield",2,4} -- name, dmgresist, AP cost
@@ -93,6 +94,11 @@ function MakeMapDimensions(x)
     counter = 1
 end
 function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents the amount of doors requested, no I wont fix this mess, it works.
+    DoorPositions[x] = {}
+    for l=1,y do
+    DoorPositions[x][l] = {}
+    end
+    DoorsInMap[x] = y
     for i=1,MapDimensions[x][1] do
         RoomMaps[x][i][1] = "#"
         RoomMaps[x][i][MapDimensions[x][2]] = "#"
@@ -101,9 +107,7 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
         RoomMaps[x][1][j] = "#"
         RoomMaps[x][MapDimensions[x][1]][j] = "#"
     end
-    for k=1,y do -- this is so sphagetti but i think it works
-        DoorPositions[x] = {}
-        DoorPositions[x][k] = {} -- random door making
+    for k=1,y do -- this is so sphagetti but i think it works (it iterates upon itself! only the most recent door is saved)
         DoorPositions[x][k][1] = math.random(1, 4) -- which side of room door should be on
         if DoorPositions[x][k][1] == 1 then -- 1 = up, 2 = right, 3 = down, 4 = left
             DoorPositions[x][k][2] = math.random(2, MapDimensions[x][1]-1)
@@ -120,6 +124,8 @@ function MakeWallsAndDoors(x,y) -- x reprisents the map selected, y reprisents t
         end
         RoomMaps[x][DoorPositions[x][k][2]][DoorPositions[x][k][3]] = "D"
     end
+    print(table.concat(DoorPositions[x][1]))
+    print(table.concat(DoorPositions[x][2]))
 end
 function RandomItemGeneration(map_request,num_items)
     counter = 1
@@ -151,6 +157,7 @@ function PlayerUpdate() -- add more stuff as needed
     if AllMaps[PlayerPosition[3]][4][PlayerPosition[1]][PlayerPosition[2]] == "P" and AllMaps[PlayerPosition[3]][3][PlayerPosition[1]][PlayerPosition[2]] == "D" then
         print("MAKE A NEW MAP (not added yet, soz)") -- Doors
     end
+    CheckRoomTransition()
 end
 function Display(x,y) -- x = map, y = layer DEPRICIATED
     for i=1,MapDimensions[x][1] do
@@ -183,6 +190,13 @@ function GenerateMap(input_,door_request_,item_request_)
     MakeMapDimensions(input_)
     MakeWallsAndDoors(input_,door_request_)
     RandomItemGeneration(input_,item_request_)
+end
+function CheckRoomTransition() -- checks if player is on a door, and which one.
+    for i=1,DoorsInMap[PlayerPosition[3]] do
+        if PlayerPosition[1] == DoorPositions[PlayerPosition[3]][i][2] and PlayerPosition[2] == DoorPositions[PlayerPosition[3]][i][3] then
+        print("On door "..i)
+        end
+    end
 end
 function QueryUser()
     while true do
