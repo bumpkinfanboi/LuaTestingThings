@@ -1,4 +1,5 @@
 --I'm going to throw some forewords here: This code sucks. I hate it, and I'm the damned fool that wrote it. I moved all the important bits from the old file to this one, because it was easier to integrate. This is the defacto main file now I guess. It's interesting to see as you go down, just how my code changes over time. This was a LOT more work than it looks. I'm definetely not proud of substituting X and Y for 1 and 2, and having the inputs for functions be single-letter variables, but I've got bigger fish to fry than fix that. It works, and that's what matters. 
+local input = nil
 local tempstorage = {} -- Fun Fact: Tables are just infinite registers :)
 local counter = 1
 local displaystring = "" -- just... don't ask.
@@ -11,6 +12,10 @@ local ItemMaps = {}
 local MapDimensions = {}
 local DoorPositions = {}
 local ItemsInPlay = {}
+local RoomType = {}
+local Basic = {3, 40, 3, 20} -- X start, X stop, Y start, Y stop (for math random)
+local Hallway = {3, 10, 3, 30}
+local TypesOfRooms = {Basic,Hallway}
 local firstmap_ = true
 local mapsgenerated_ = 0 -- mostly useless, but adding a statistic is neat ig idfk
 local firstturn_ = true
@@ -76,9 +81,12 @@ function MakeMapDimensions(x)
         RoomMaps[i] = {}
         EntityMaps[i] = {}
         ItemMaps[i] = {}
+        RoomType = {}
         AllMaps[i] = {i,MapDimensions[i],RoomMaps[i],EntityMaps[i],ItemMaps[i],DoorPositions[i],ItemsInPlay[i]}
-        MapDimensions[i][1] = math.random(3, 40) -- x by y or width by height
-        MapDimensions[i][2] = math.random(3, 20)
+        RoomType[i] = TypesOfRooms[math.random(1, #TypesOfRooms)]
+        print(RoomType[i])
+        MapDimensions[i][1] = math.random(RoomType[i][1], RoomType[i][2]) -- x by y or width by height
+        MapDimensions[i][2] = math.random(RoomType[i][3], RoomType[i][4])
         for j=1,MapDimensions[i][1] do -- all of this is just matrix bullshit :)
             RoomMaps[i][j] = {}
             EntityMaps[i][j] = {}
@@ -217,27 +225,17 @@ function QueryUser() -- this is less a function, and more the main program loop,
         if input == "quit" then
         print("Quitting!")
         break
-        elseif input == "generatemap" then
-            print("generating map, confirm?")
-            input = io.read()
-            if input == "yes" or input == "y" then
-                if mapsgenerated_ > 0 then
-                    firstmap_ = false
-                end
-                mapsgenerated_ = mapsgenerated_ + 1
-                print("What mapnumber do you want? Always start with 1, then display 1 before generating another map.")
-                input = io.read()
-                tempstorage[1] = tonumber(input)
-                print("How many doors do you want? (Two minimum)")
-                input = io.read()
-                tempstorage[2] = tonumber(input)
-                print("How many items do you want? (only 1-3 are tested)")
-                input = io.read()
-                tempstorage[3] = tonumber(input)
-                GenerateMap(tempstorage[1],tempstorage[2],tempstorage[3])
-                print("Map generated!")
-                tempstorage = {}
-            end
+        elseif string.match(input, "generatemap") then -- if you find key string (like a command) -- NOT DONE, HALF IMPLEMENTED
+        if mapsgenerated_ > 0 then
+            firstmap_ = false
+        end
+            mapsgenerated_ = mapsgenerated_ + 1
+            --print(string.find(input, "(%d+) (%d+) (%d+)")) -- check for numbers in this pattern (if more than 3, use first 3, spaces included)
+            _, _, tempstorage[1], tempstorage[2], tempstorage[3] = string.find(input, "(%d+) (%d+) (%d+)") -- first two are start and end locations of pattern, just dummy remove first two with _ variable, then save other three as d, m, and y.
+            --print(tempstorage[2]) -- print a specific variable saved
+            GenerateMap(tonumber(tempstorage[1]),tonumber(tempstorage[2]),tonumber(tempstorage[3]))
+            print("map generated")
+            tempstorage = {}
         elseif input == "checkinv" then
             CheckInv()
         elseif input == "checkstatus" then
