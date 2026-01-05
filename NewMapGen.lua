@@ -14,8 +14,10 @@ local DoorPositions = {}
 local ItemsInPlay = {}
 local RoomType = {}
 local Basic = {3, 40, 3, 20} -- X start, X stop, Y start, Y stop (for math random)
-local Hallway = {3, 10, 3, 30}
+local Hallway = {3, 5, 3, 30}
 local TypesOfRooms = {Basic,Hallway}
+Basic[type] = "Basic"
+Hallway[type] = "Hallway" --this is stupid but i dont care
 local firstmap_ = true
 local mapsgenerated_ = 0 -- mostly useless, but adding a statistic is neat ig idfk
 local firstturn_ = true
@@ -84,7 +86,7 @@ function MakeMapDimensions(x)
         RoomType = {}
         AllMaps[i] = {i,MapDimensions[i],RoomMaps[i],EntityMaps[i],ItemMaps[i],DoorPositions[i],ItemsInPlay[i]}
         RoomType[i] = TypesOfRooms[math.random(1, #TypesOfRooms)]
-        print(RoomType[i])
+        print(RoomType[i][type])
         MapDimensions[i][1] = math.random(RoomType[i][1], RoomType[i][2]) -- x by y or width by height
         MapDimensions[i][2] = math.random(RoomType[i][3], RoomType[i][4])
         for j=1,MapDimensions[i][1] do -- all of this is just matrix bullshit :)
@@ -246,7 +248,7 @@ function QueryUser() -- this is less a function, and more the main program loop,
             maptodisplay_ = tonumber(string.match(input, "%d+")) -- %d+ = first number in a string (?)
             DisplayAllLayers(maptodisplay_)
         elseif input == "help" then
-            print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory (NOT IMPLEMENTED YET) \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (e.g. display 1). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated. \n move - moves the player how many tiles you want in a given direction (e.g. move up 1) \n ")
+            print("Commands: \n quit - Ends the program. \n checkinv - checks player inventory \n checkstatus - checks player health, hunger, and you can get a detailed overview \n display - displays the map you generated (e.g. display 1). \n generatemap - you can generate another entire map with a configurable amount of doors and items. Use display and select the map number you generated (e.g. generatemap 1 2 3). \n move - moves the player how many tiles you want in a given direction (e.g. move up 1) \n ")
         elseif string.match(input, "move") then
             print("moving")
             if string.match(input, "up") then

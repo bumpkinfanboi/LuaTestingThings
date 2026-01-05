@@ -26,10 +26,6 @@ The program has a "help" command, so by typing help you can see what commands ar
 
 TODO LIST:
 
-Add multiple rooms and going back and forth between them
-
-Add hallways (and roomtypes ..?)
-
 Add enemies
 
 Add staircases to new floors
