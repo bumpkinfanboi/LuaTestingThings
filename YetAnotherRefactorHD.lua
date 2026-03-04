@@ -9,4 +9,4 @@ function Request(input, filename)
     else print("Failure to find!")
     end
 end
---print(Request("player").status.hppercent) -- LETS GOOOO IT WORKS!!
+--print(Request("player").status.hppercent) -- LETS GOOOO IT WORKS!
