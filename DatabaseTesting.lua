@@ -33,6 +33,12 @@ local player = {
         playery = 2;
     };
 }
+local database = {
+    player = player;
+    roomtypes = roomtypes;
+    AllMaps = {}
+
+}
 for i=1,player.inventory.size do
     player.inventory[i] = {}
 end
@@ -45,10 +51,6 @@ if Fetch == "roomtypes" then
     return roomtypes -- these return(s) is for whatever calls this file 
 elseif Fetch == "player" then
     return player
+elseif Fetch == "AllMaps" then
+    return database.AllMaps
 end
-local database = {
-    player = player;
-    roomtypes = roomtypes;
-    AllMaps = {}
-
-}
