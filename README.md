@@ -1,4 +1,6 @@
-Updated README, 12/11/2025
+Updated README, 3/25/26
+
+UPDATE: depriciated since December 2025. I got burned out. Soz.
 
 I am making a tiny shitty little rouge clone just to get the basics of lua down, so don't expect the moon.
 I work on this when I want, It's been about two months and I have >400 lines of code.
